@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "852397747930",
+    "firebase_url": "https://flutterfire-demo-22241-default-rtdb.firebaseio.com",
+    "project_id": "flutterfire-demo-22241",
+    "storage_bucket": "flutterfire-demo-22241.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852397747930:android:fef8fcacc3bb0be9263fe3",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbaq9eG8e0y6sCx_0h4EZVuXoqntb14rM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
