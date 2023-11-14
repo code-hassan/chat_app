@@ -1,4 +1,5 @@
 import 'package:chat_app/widgets/user_image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,9 @@ class _AuthScreenState extends State<AuthScreen> {
   var _isLogin = true;
   var _enteredEmail = '';
   var _enteredPassword = '';
+  var _enteredUsername = '';
   File? _selectedImage;
+  bool _isAuthenticating = false;
   void _submit() async{
     print("vvvvvvvvvvvvvvvvvvvvv");
     final isValid = _form.currentState!.validate();
@@ -30,6 +33,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
     _form.currentState!.save();
     try{
+      setState(() {
+        _isAuthenticating = true;
+      });
       if (_isLogin) {
         print("vvvvvvvvvvvvvvvvvvvvv sign In");
         final userCredential = await _firebase.signInWithEmailAndPassword(
@@ -51,7 +57,14 @@ class _AuthScreenState extends State<AuthScreen> {
         await storageRef.putFile(_selectedImage!);
         final imageUrl = await storageRef.getDownloadURL();
         print("imageUrl vvvvvv vvvvv ${imageUrl}");
-
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+             'username': _enteredUsername,
+              'email': _enteredEmail,
+             'image_Url': imageUrl,
+        });
         print("userCredential hassan ${userCredential}");
       }
     } on FirebaseAuthException catch(error){
@@ -62,6 +75,9 @@ class _AuthScreenState extends State<AuthScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.message ?? "Authentication failed")),
       );
+      setState(() {
+        _isAuthenticating = false;
+      });
     }
   }
 
@@ -112,6 +128,23 @@ class _AuthScreenState extends State<AuthScreen> {
                               _enteredEmail = value!;
                             },
                           ),
+                          if(!_isLogin)
+                          TextFormField(
+                            decoration: const InputDecoration(labelText: "Username"),
+                            enableSuggestions: false,
+                            validator: (value){
+                              if(value == null
+                                  || value.isEmpty
+                                  || value.trim().length < 4 ){
+                                return "Please enter at least 4 characters";
+                              }
+                              return null;
+                            },
+                            onSaved: (value){
+                              _enteredUsername = value!;
+                            },
+
+                          ),
 
                           TextFormField(
                             decoration: const InputDecoration(
@@ -130,7 +163,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
 
                           SizedBox(height: 12,),
-
+                          if(_isAuthenticating)
+                            const CircularProgressIndicator(),
+                          if(!_isAuthenticating)
                           TextButton(
                             onPressed: _submit,
                             style: ElevatedButton.styleFrom(
@@ -138,7 +173,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                             child: Text(_isLogin ? "Login" : "Signup"),
                           ),
-
+                          if(!_isAuthenticating)
                           TextButton(
                             onPressed: (){
                               setState(() {
