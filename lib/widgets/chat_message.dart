@@ -5,17 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessages extends StatelessWidget {
-  const ChatMessages({super.key});
-
+  const ChatMessages({super.key, required this.documentId});
+final String documentId;
   @override
   Widget build(BuildContext context) {
+    print("vvvvvvvvvvvvvvvvvvvvvvv ${documentId}");
     final authenticatedUser = FirebaseAuth.instance.currentUser!;
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('chat')
-            .orderBy(
-            'createdAt',
-            descending: true,)
+            .orderBy('createdAt',descending: true,)
             .snapshots(),
         builder: (ctx,chatSnapshots){
           if(chatSnapshots.connectionState == ConnectionState.waiting){
@@ -34,6 +33,7 @@ class ChatMessages extends StatelessWidget {
             );
           }
           final loadedMessages = chatSnapshots.data!.docs;
+
           return ListView.builder(
             padding: const EdgeInsets.only(
               bottom: 40,

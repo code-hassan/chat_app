@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
-
+  const ChatScreen({super.key, required this.documentId});
+  final String documentId;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +24,9 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Column(
+      body: Column(
         children: [
-          Expanded(child: ChatMessages(),),
+          Expanded(child: ChatMessages(documentId: documentId)),
           NewMessage(),
         ],
       )
